@@ -65,9 +65,95 @@ results = mt_measures(ss3, use = "tn_trajectories")
 
 #making a nice table for Maxmial distance and xpos_flips w/e that is.
 mt_aggregate(results, use_variables = c("MAD", "xpos_flips"), use2_variables = "trial_type")
-this is cordulas results, nice.
+#this is cordulas results, nice.
 
+```
+
+
+
+
+
+
+
+
+```{r}
+a = read_csv("987.csv")
+
+ggplot(a, aes(MouseX, MouseY))+geom_point()
+
+a = a %>% mutate(
+  MouseX = MouseX+0.9,
+  MouseY = MouseY+0.9)
+
+
+ggplot(a, aes(MouseX, MouseY))+geom_point()
+
+a$Time1 = lag(a$Time)
+a$timedif = a$Time-aa$Time1
+
+
+a$Time1 = lag(a$Time)
+a$timedif = a$Time-a$Time1
+
+
+
+a$mousey1 = lag(a$MouseY)
+
+a$mydif = a$MouseY-a$mousey1
+
+
+a$vy = a$mydif/a$timedif
+
+
+ggplot(a, aes(Time, vy))+geom_point()+facet_wrap("Trial")
+#what a mess lets look at the first trial
+
+aa = a %>% dplyr::filter(Trial == 1)
+
+
+ggplot(aa, aes(Time, MouseY))+geom_point()
+ggplot(aa, aes(Time, vy))+geom_point()
+
+
+ggplot(aa, aes(Time, MouseY)) + 
+  geom_point(aes(y = vy, col = "red")) + 
+  geom_point(aes(y = MouseY,)) + 
+  scale_y_continuous(
+    "MouseY", 
+    sec.axis = sec_axis(~ . * 1, name = "vy")
+  )
+
+
+
+#for all?
+
+ggplot(a, aes(Time, MouseY)) + 
+  geom_point(aes(y = vy, col = "red")) + 
+  geom_point(aes(y = MouseY,)) + 
+  scale_y_continuous(
+    "MouseY", 
+    sec.axis = sec_axis(~ . * 1, name = "vy"))+facet_wrap("Trial")
+#niceee.
 
 
 ```
+
+
+
+
+
+```{r}
+
+#install.packages("signal")
+library(signal)
+bf = butter(2,1/3, type = "low")
+
+aa$vyf = filtfilt(bf, aa$vy)
+
+ggplot(aa,aes(Time, vyf))+geom_point()
+ggplot(aa,aes(Time, vy))+geom_point()
+
+
+```
+
 
