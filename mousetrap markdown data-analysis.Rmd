@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+
+```{r}
+library(tidyverse)
+#install if not already done.
+#install.packages("mousetrap")
+library(mousetrap)
+```
+
+
+
+
+```{r}
+#get the data.
+s = read_csv("subject-3.csv")
+
+#make mousetrap object
+ss = mt_import_mousetrap(s)
+#plot the data
+mt_plot(ss)
+#make everything go to the same side
+ss1 = mt_remap_symmetric(ss)
+#compare with the first plot
+mt_plot(ss)
+#color by trial type
+mt_plot(ss1, color = "trial_type")
+#plot timestamps vs xposition
+mt_plot(ss1, x = "timestamps", y = "xpos", color = "trial_type")
+#exclude the initial times
+ss2 = mt_exclude_initiation(ss1)
+#now plotting again
+mt_plot(ss2, x = "timestamps", y = "xpos", color = "trial_type")
+#plotting x-position vs y-postion
+mt_plot(ss2, color = "trial_type")
+#comparing where the inital times arent removed:
+mt_plot(ss1, color = "trial_type")
+#playing with time normalization.
+ss3 = mt_time_normalize(ss2, nsteps = 1000)
+#plotting it
+mt_plot(ss3, use = "tn_trajectories", color = "trial_type")
+#trying nsteps 5
+ss4 = mt_time_normalize(ss2, nsteps = 5)
+#and plotting
+mt_plot(ss4, use = "tn_trajectories", color = "trial_type")
+#setting it back to default which is 101.
+ss3 = mt_time_normalize(ss2, nsteps = 101)
+# plotting the aggregated data both with the normalized and non-normalized time.
+mt_plot_aggregate(ss3, color = "trial_type")
+mt_plot_aggregate(ss3, use = "tn_trajectories",color = "trial_type")
+#looks best with the normalized.
+
+#getting numeric results.
+results = mt_measures(ss3, use = "tn_trajectories")
+
+#making a nice table for Maxmial distance and xpos_flips w/e that is.
+mt_aggregate(results, use_variables = c("MAD", "xpos_flips"), use2_variables = "trial_type")
+this is cordulas results, nice.
+
+
+
+```
+
